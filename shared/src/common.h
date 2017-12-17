@@ -139,6 +139,12 @@ struct Alert{
     struct DateCriteria* periods;
     int direction;
     BW_INT amount;
+	char* email;
+	char* smtpserver;
+	char* smtpport;
+	char* smtpuser;
+	char* smtppassword;
+	int hasnotified;
     struct Alert* next;
 };
 
@@ -186,6 +192,11 @@ struct Alert* allocAlert();
 void freeAlert(struct Alert* alert);
 void appendAlert(struct Alert** earlierAlert, struct Alert* newAlert);
 void setAlertName(struct Alert* alert, const char* name);
+void setAlertEmail(struct Alert* alert, const char* email);
+void setAlertSmtpServer(struct Alert* alert, const char* smtpserer);
+void setAlertSmtpPort(struct Alert* alert, const char* smtpport);
+void setAlertSmtpUser(struct Alert* alert, const char* smtpuser);
+void setAlertSmtpPassword(struct Alert* alert, const char* smtppassword);
 struct DateCriteriaPart* makeDateCriteriaPart(char* txt);
 void freeDateCriteriaPart(struct DateCriteriaPart* criteriaPart);
 char* dateCriteriaPartToText(struct DateCriteriaPart* part);

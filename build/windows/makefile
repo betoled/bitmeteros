@@ -46,7 +46,7 @@ EXE_WEB_SRV=BitMeterWebService.exe
 EXE_TEST=unittests.exe
 
 INCLUDE_DIRS=-I$(SHARED_SRC) -I$(SHARED_CLIENT_SRC) -I$(CLIENT_SRC) -I$(CAPTURE_SRC) -I$(WEB_SRC) -I$(BMDB_SRC) -I$(SYNC_SRC) -I$(SUP_SRC) -I$(TEST)
-LIBS=.\sqlite3.dll -lws2_32 -lmswsock -ladvapi32 -lshlwapi -liphlpapi
+LIBS=.\sqlite3.dll .\libcurl.dll -lws2_32 -lmswsock -ladvapi32 -lshlwapi -liphlpapi
 OBJS_BMSYNC=bmsync.o syncHelp.o syncHelpText.o syncOptions.o sql.o common.o data.o db.o log.o platform.o time.o
 OBJS_BMDB=bmdb.o bmdbConfig.o upgrade.o bmdbVersion.o bmdbHelpText.o log.o db.o common.o platform.o data.o admin.o
 OBJS_BMWS=bmwsWin32.o handleConfig.o handleFile.o handleMonitor.o handleQuery.o handleSync.o handleAlert.o handleSummary.o handleExport.o handleRss.o http.o httpRequest.o data.o common.o log.o platform.o dbMultiThreaded.o alert.o clientMonitor.o clientSummary.o clientSync.o clientQuery.o clientDump.o clientAlert.o clientUtil.o time.o
@@ -239,14 +239,14 @@ bmdb.o: $(BMDB_SRC)\bmdb.c $(BMDB_SRC)\bmdb.h $(SHARED_SRC)\common.h $(BMDB_SRC)
 
 #### bmws standalone
 bmwsExe:  bmwsExe.o $(OBJS_BMWS)
-	$(CC) bmwsExe.o $(OBJS_BMWS) -o $(EXE_WEB) $(LIBS)
+	$(CC) bmwsExe.o $(OBJS_BMWS) -o $(EXE_WEB) $(LIBS) -DCURL_STATICLIB
 
 #### bmws service
 bmwsService: bmwsWin32Service.o $(OBJS_BMWS)
 	$(CC)    bmwsWin32Service.o $(OBJS_BMWS) -o $(EXE_WEB_SRV) $(LIBS)
 
 bmwsExe.o: $(WEB_SRC)\bmwsWin32Exe.c $(WEB_SRC)\bmws.h $(SHARED_SRC)\common.h
-	$(CC) -c $(WEB_SRC)\bmwsWin32Exe.c -o bmwsExe.o $(INCLUDE_DIRS)
+	$(CC) -c $(WEB_SRC)\bmwsWin32Exe.c -o bmwsExe.o $(INCLUDE_DIRS) 
 
 bmwsWin32.o: $(WEB_SRC)\bmwsWin32.c $(WEB_SRC)\bmws.h $(SHARED_SRC)\common.h
 	$(CC) -c $(WEB_SRC)\bmwsWin32.c  -o bmwsWin32.o $(INCLUDE_DIRS)

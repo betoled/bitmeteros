@@ -85,5 +85,5 @@ char* helpTxt=
 "    bmclient -h" EOL
 " " EOL
 "Email: rob@codebox.org.uk" EOL
-"Web:   http://codebox.org.uk/bitmeterOs" EOL
+"Web:   http://codebox.org.uk/bitmeteros" EOL
 ; 

@@ -35,7 +35,7 @@
 #include "common.h"
 #include "client.h"
 
-#define ALERT_SQL_SELECT_ALL                 "SELECT id, name, active, bound, direction, amount FROM alert;"
+#define ALERT_SQL_SELECT_ALL                 "SELECT id, name, active, bound, direction, amount, email, smtpserver, smtpport, smtpuser, smtppassword, hasnotified FROM alert;"
 #define ALERT_SQL_SELECT_INTERVAL            "SELECT yr, mn, dy, wk, hr FROM interval WHERE id=?;"
 #define ALERT_SQL_SELECT_INTERVALS_FOR_ALERT "SELECT interval_id FROM alert_interval WHERE alert_id=?"
 #define ALERT_SQL_DELETE_ALERT               "DELETE FROM alert WHERE id=?;"
@@ -43,7 +43,7 @@
 #define ALERT_SQL_DELETE_ALERT_INTERVAL      "DELETE FROM alert_interval WHERE alert_id=?;"
 #define ALERT_SQL_SELECT_MAX_ALERT_ID        "SELECT max(id) FROM alert;"
 #define ALERT_SQL_SELECT_MAX_INTERVAL_ID     "SELECT max(id) FROM interval;"
-#define ALERT_SQL_INSERT_ALERT               "INSERT INTO alert (id, name, active, bound, direction, amount) VALUES (?,?,?,?,?,?);"
+#define ALERT_SQL_INSERT_ALERT               "INSERT INTO alert (id, name, active, bound, direction, amount, email, smtpserver, smtpport, smtpuser, smtppassword, hasnotified) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
 #define ALERT_SQL_INSERT_INTERVAL            "INSERT INTO interval (id, yr, mn, dy, wk, hr) VALUES (?,?,?,?,?,?);"
 #define ALERT_SQL_INSERT_ALERT_INTERVAL      "INSERT INTO alert_interval (alert_id, interval_id) VALUES (?,?);"
 #define ALERT_SQL_SELECT_ROWS                "SELECT ts AS ts, dr AS dr, dl AS dl, ul AS ul FROM data WHERE ts >=?;"
@@ -254,7 +254,16 @@ static int doAddAlert(struct Alert* alert, int alertId){
         sqlite3_bind_int(stmtInsertAlert,   4, boundId); // this is the unique id we remembered previously
         sqlite3_bind_int(stmtInsertAlert,   5, alert->direction);
         sqlite3_bind_int64(stmtInsertAlert, 6, alert->amount);
-        
+
+        //Additional properties
+        //email, smtpserver, smtpport, smtpuser, smtppassword, hasnotified
+        sqlite3_bind_text(stmtInsertAlert,  7, alert->email, strlen(alert->email), SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmtInsertAlert,  8, alert->smtpserver, strlen(alert->smtpserver), SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmtInsertAlert,  9, alert->smtpport, strlen(alert->smtpport), SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmtInsertAlert,  10, alert->smtpuser, strlen(alert->smtpuser), SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmtInsertAlert,  11, alert->smtppassword, strlen(alert->smtppassword), SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmtInsertAlert,   12, alert->hasnotified);
+
         int rc = sqlite3_step(stmtInsertAlert);
         if (rc != SQLITE_DONE){
         	logMsg(LOG_ERR, "stmtInsertAlert failed: %d", rc);
@@ -429,6 +438,17 @@ static struct Alert* alertForRow(sqlite3_stmt *stmtSelectAlerts,
     alert->direction = sqlite3_column_int(stmtSelectAlerts, 4);
     alert->amount = sqlite3_column_int64(stmtSelectAlerts, 5);
     
+    const unsigned char* smtpserver = sqlite3_column_text(stmtSelectAlerts, 6);
+    setAlertSmtpServer(alert, smtpserver);
+    const unsigned char* smtpport = sqlite3_column_text(stmtSelectAlerts, 7);
+    setAlertSmtpPort(alert, smtpport);
+    const unsigned char* smtpuser = sqlite3_column_text(stmtSelectAlerts, 8);
+    setAlertSmtpUser(alert, smtpuser);
+    const unsigned char* smtppassword = sqlite3_column_text(stmtSelectAlerts, 9);
+    setAlertSmtpPassword(alert, smtppassword);
+    
+    alert->hasnotified  = sqlite3_column_int(stmtSelectAlerts, 10);
+
  // Create DateCriteria structs for each of the periods of the alert (ie the times/days when it is active)
     int periodId;
     struct DateCriteria* period;

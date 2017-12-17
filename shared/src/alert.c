@@ -68,6 +68,96 @@ void setAlertName(struct Alert* alert, const char* name){
         strcpy(alert->name, nameTrimmed);
     }
 }
+void setAlertEmail(struct Alert* alert, const char* email){
+ // Free up the current name if there is one
+    if (alert->email != NULL){
+        free(alert->email);   
+    }
+	
+    if (email == NULL){
+        alert->email = NULL;
+        
+    } else {
+     // Remove any leading/trailing whitespace
+        char* nameTrimmed = trim(strdupa(email));
+
+     // Copy the specified name string onto the heap, and associate the Alert struct with it
+        alert->email = malloc(strlen(nameTrimmed)+1);
+        strcpy(alert->email, nameTrimmed);
+    }
+}
+void setAlertSmtpServer(struct Alert* alert, const char* smtpserver){
+ // Free up the current name if there is one
+    if (alert->smtpserver != NULL){
+        free(alert->smtpserver);   
+    }
+	
+    if (smtpserver == NULL){
+        alert->smtpserver = NULL;
+        
+    } else {
+     // Remove any leading/trailing whitespace
+        char* nameTrimmed = trim(strdupa(smtpserver));
+
+     // Copy the specified name string onto the heap, and associate the Alert struct with it
+        alert->smtpserver = malloc(strlen(nameTrimmed)+1);
+        strcpy(alert->smtpserver, nameTrimmed);
+    }
+}
+void setAlertSmtpPort(struct Alert* alert, const char* smtpport){
+ // Free up the current name if there is one
+    if (alert->smtpport != NULL){
+        free(alert->smtpport);   
+    }
+	
+    if (smtpport == NULL){
+        alert->smtpport = NULL;
+        
+    } else {
+     // Remove any leading/trailing whitespace
+        char* nameTrimmed = trim(strdupa(smtpport));
+
+     // Copy the specified name string onto the heap, and associate the Alert struct with it
+        alert->smtpport = malloc(strlen(nameTrimmed)+1);
+        strcpy(alert->smtpport, nameTrimmed);
+    }
+}
+void setAlertSmtpUser(struct Alert* alert, const char* smtpuser){
+ // Free up the current name if there is one
+    if (alert->smtpuser != NULL){
+        free(alert->smtpuser);   
+    }
+	
+    if (smtpuser == NULL){
+        alert->smtpuser = NULL;
+        
+    } else {
+     // Remove any leading/trailing whitespace
+        char* nameTrimmed = trim(strdupa(smtpuser));
+
+     // Copy the specified name string onto the heap, and associate the Alert struct with it
+        alert->smtpuser = malloc(strlen(nameTrimmed)+1);
+        strcpy(alert->smtpuser, nameTrimmed);
+    }
+}
+void setAlertSmtpPassword(struct Alert* alert, const char* smtppassword){
+ // Free up the current name if there is one
+    if (alert->smtppassword != NULL){
+        free(alert->smtppassword);   
+    }
+	
+    if (smtppassword == NULL){
+        alert->smtppassword = NULL;
+        
+    } else {
+     // Remove any leading/trailing whitespace
+        char* nameTrimmed = trim(strdupa(smtppassword));
+
+     // Copy the specified name string onto the heap, and associate the Alert struct with it
+        alert->smtppassword = malloc(strlen(nameTrimmed)+1);
+        strcpy(alert->smtppassword, nameTrimmed);
+    }
+}
 void appendAlert(struct Alert** earlierAlert, struct Alert* newAlert){
     if (*earlierAlert == NULL){
         *earlierAlert = newAlert;
