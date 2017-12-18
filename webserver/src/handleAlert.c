@@ -368,6 +368,12 @@ void processAlertUpdate(SOCKET fd, struct NameValuePair* params){
     char*  amountTxt  = getValueForName(    "amount",    params, NULL);
     char*  boundTxt   = getValueForName(    "bound",     params, NULL);
     char*  periodsTxt = getValueForName(    "periods",   params, NULL);
+    char*  email       = getValueForName(    "email",      params, NULL);
+    char*  smtpserver       = getValueForName(    "smtpserver",      params, NULL);
+    char*  smtpport       = getValueForName(    "smtpport",      params, NULL);
+    char*  smtpuser       = getValueForName(    "smtpuser",      params, NULL);
+    char*  smtppassword       = getValueForName(    "smtppassword",      params, NULL);
+
     BW_INT amount = strToBwInt(amountTxt, BAD_NUM);
 
     if (id == BAD_NUM || name == NULL || active == BAD_NUM || direction == BAD_NUM || amount == BAD_NUM || boundTxt == NULL || periodsTxt == NULL) {
@@ -409,6 +415,11 @@ void processAlertCreate(SOCKET fd, struct NameValuePair* params){
     char* amountTxt  = getValueForName(    "amount",    params, NULL);
     char* boundTxt   = getValueForName(    "bound",     params, NULL);
     char* periodsTxt = getValueForName(    "periods",   params, NULL);
+    char*  email       = getValueForName(    "email",      params, NULL);
+    char*  smtpserver       = getValueForName(    "smtpserver",      params, NULL);
+    char*  smtpport       = getValueForName(    "smtpport",      params, NULL);
+    char*  smtpuser       = getValueForName(    "smtpuser",      params, NULL);
+    char*  smtppassword       = getValueForName(    "smtppassword",      params, NULL);
 
     BW_INT amount = strToBwInt(amountTxt, BAD_NUM);
 

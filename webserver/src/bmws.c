@@ -61,7 +61,12 @@ static void web(SOCKET fd){
     }
     
 	int allowAdmin = isLocalConnection(fd) || allowRemoteAdmin;
-	processRequest(fd, buffer, allowAdmin);
+    try {
+	    processRequest(fd, buffer, allowAdmin);
+    }
+    catch (Exception ex) {
+        logMsg(LOG_ERR, "Error processing request.");
+    }
 
     exit(0);
 }
@@ -166,7 +171,7 @@ int main(){
     socklen_t length;
     static struct sockaddr_in clientAddress;
 
-	setLogLevel(LOG_WARN);
+	setLogLevel(LOG_DEBUG);
 	setAppName("WEB");
 	setLogToFile(TRUE);
 

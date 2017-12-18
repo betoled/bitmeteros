@@ -54,7 +54,7 @@ static void web(void* fdVoid){
     if (rc < 0){
         logMsg(LOG_ERR, "read() returned %d, %s", rc, strerror(errno));
     } else if (rc == 0){
-        logMsg(LOG_ERR, "read() returned 0");
+        logMsg(LOG_ERR, "read() returned 0 from bmwsWin32");
     } else if(rc >= BUFSIZE){
         logMsg(LOG_ERR, "read() returned %d which is larger than buffer size of %d", rc, BUFSIZE);
     } else {
@@ -117,12 +117,15 @@ static void readDbConfig(){
 }
 
 void setupWeb(){
-	setLogLevel(LOG_WARN);
+	setLogLevel(LOG_DEBUG);
 	setAppName("WEB");
-	setLogToFile(TRUE);
+	//setLogToFile(TRUE);
+    setLogToFile(FALSE);
 	initMutex();
 	readDbConfig();
 	
+    logMsg(LOG_DEBUG,"WEB setup...");
+
     WSADATA wsaData;
     WORD socketsVersion = MAKEWORD(2, 2);
 

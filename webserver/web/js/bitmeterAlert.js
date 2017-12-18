@@ -18,6 +18,12 @@ BITMETER.tabShowAlerts = function(){
         BITMETER.createAlertModel.setId(alertObj.id);
         BITMETER.createAlertModel.setAmount(alertObj.amount);
         BITMETER.createAlertModel.setDirection(alertObj.direction);
+        BITMETER.createAlertModel.setEmail(alertObj.email);
+        BITMETER.createAlertModel.setSmtpServer(alertObj.smtpserer);
+        BITMETER.createAlertModel.setSmtpPort(alertObj.smtpport);
+        BITMETER.createAlertModel.setSmtpUser(alertObj.smtpuser);
+        BITMETER.createAlertModel.setSmtpPassword(alertObj.smtppassword);
+        BITMETER.createAlertModel.setHasNotified(alertObj.hasnotified);
 
         function isRolling(txt){
             return txt.indexOf('-') === 0;
@@ -252,7 +258,8 @@ BITMETER.consts.alerts.arrWeekends = [1,0,0,0,0,0,1];
 BITMETER.consts.alerts.arrWeekdays = [0,1,1,1,1,1,0];
 
 BITMETER.createAlertModel = (function(){
-    var model = {}, onChangeCallback, id, amount = null, direction, startType = null, startFixedDate = null,
+    var model = {}, onChangeCallback, id, amount = null, direction, email="", smtpserver="",smtpport="",
+    smtpuser="", smtppassword="", hasnotified=0, startType = null, startFixedDate = null,
             startFixedTime = null, startRepeatingType = null, startRepeatingDate = null,
             startRepeatingDay = null, startRepeatingTime = null, startRollingUnits = null,
             startRollingAmount = '', timesType = null, periods = {}, nextPeriodId = 0, periodCount = 0, name;
@@ -267,6 +274,8 @@ BITMETER.createAlertModel = (function(){
 
     model.reset = function(){
         id = name = amount = direction = startType = startFixedDate = startFixedTime = startRepeatingType = startRepeatingDate = startRepeatingDay = startRepeatingTime = startRollingUnits = startRollingAmount = timesType = null;
+        email = smtpserer = smtpport = smtpuser = smtppassword = "";
+        hasnotified = 0;
         periods = {};
         nextPeriodId = periodCount = 0;
     };
@@ -294,6 +303,48 @@ BITMETER.createAlertModel = (function(){
         return direction;
     };
 
+    model.setEmail = function(eml) {
+        email = eml;
+        onChange();
+    }
+    model.getEmail = function() {
+        return email;
+    }
+    model.setSmtpServer = function(server){
+        smtpserver = server;
+        onChange();
+    }
+    model.getSmtpServer = function () {
+        return smtpserver;
+    }
+    model.setSmtpPort = function(port){
+        smtpport = port;
+        onChange();
+    }
+    model.getSmtpPort = function() {
+        return smtpport;
+    }
+    model.setSmtpUser = function(user) {
+        smtpuser = user;
+        onChange();
+    }
+    model.getSmtpUser = function() {
+        return smtpuser;
+    }
+    model.setSmtpPassword = function(pwd) {
+        smtppassword = pwd;
+        onChange();
+    }
+    model.getSmtpPassword = function () {
+        return smtppassword;
+    }
+    model.setHasNotified = function(notified) {
+        hasnotified = notified;
+        onChange();
+    }
+    model.getHasNotified = function() {
+        return hasnotified;
+    }
     model.setStartType = function(st){
         startType = Number(st);
         onChange();
@@ -500,6 +551,11 @@ BITMETER.resetAlertView = function(){
 
  // Name
     $('#createAlertName').val('');
+    $('#createAlertEmail').val('');
+    $('#createAlertSmtpServer').val('');
+    $('#createAlertSmtpPort').val('');
+    $('#createAlertSmtpUser').val('');
+    $('#createAlertSmtpPassword').val('');
 
     $('#createAlertBox select').attr('selectedIndex', -1);
 };
@@ -627,6 +683,36 @@ BITMETER.updateCreateAlertViewFromModel = function(isUserEdit){
         $('#createAlertName').val(name);
     } else {//if (name === null){
         $('#createAlertName').val('');
+    }
+    email = BITMETER.createAlertModel.getEmail();
+    if (name !== null){
+        $('#createAlertEmail').val(email);
+    } else {
+        $('#createAlertEmail').val('');
+    }
+    smtpserver = BITMETER.createAlertModel.getSmtpServer();
+    if (name !== null){
+        $('#createAlertSmtpServer').val(smtpserver);
+    } else {
+        $('#createAlertSmtpServer').val('');
+    }
+    smtpport = BITMETER.createAlertModel.getSmtpPort();
+    if (name !== null){
+        $('#createAlertSmtpPort').val(smtpport);
+    } else {
+        $('#createAlertSmtpPort').val('');
+    }
+    smtpuser = BITMETER.createAlertModel.getSmtpUser();
+    if (name !== null){
+        $('#createAlertSmtpUser').val(smtpuser);
+    } else {
+        $('#createAlertSmtpUser').val('');
+    }
+    smtppassword = BITMETER.createAlertModel.getSmtpPassword();
+    if (name !== null){
+        $('#createAlertSmtpPassword').val(smtppassword);
+    } else {
+        $('#createAlertSmtpPassword').val('');
     }
 
  // Set the Period values
@@ -815,6 +901,11 @@ BITMETER.updateCreateAlertViewFromModel = function(isUserEdit){
             url += '&active=1';
             url += '&direction=' + BITMETER.createAlertModel.getDirection();
             url += '&amount=' + BITMETER.createAlertModel.getAmount();
+            url += '&email=' + BITMETER.createAlertModel.getEmail();
+            url += '&smtpserver=' + BITMETER.createAlertModel.getSmtpServer();
+            url += '&smtpport=' + BITMETER.createAlertModel.getSmtpPort();
+            url += '&smtpuser=' + BITMETER.createAlertModel.getSmtpUser();
+            url += '&smtppassword=' + BITMETER.createAlertModel.getSmtpPassword();
             url += '&bound=' + makeBoundParam();
             url += '&periods=' + makePeriodsParam();
 
@@ -1062,6 +1153,26 @@ $(function(){
     $('#createAlertName').keyup(function(){
         var name = $('#createAlertName').val();
         BITMETER.createAlertModel.setName(name);
+    });
+    $('#createAlertEmail').keyup(function(){
+        var name = $('#createAlertEmail').val();
+        BITMETER.createAlertModel.setEmail(name);
+    });
+    $('#createAlertSmtpServer').keyup(function(){
+        var name = $('#createAlertSmtpServer').val();
+        BITMETER.createAlertModel.setSmtpServer(name);
+    });
+    $('#createAlertSmtpPort').keyup(function(){
+        var name = $('#createAlertSmtpPort').val();
+        BITMETER.createAlertModel.setSmtpPort(name);
+    });
+    $('#createAlertSmtpUser').keyup(function(){
+        var name = $('#createAlertSmtpUser').val();
+        BITMETER.createAlertModel.setSmtpUser(name);
+    });
+    $('#createAlertSmtpPassword').keyup(function(){
+        var name = $('#createAlertSmtpPassword').val();
+        BITMETER.createAlertModel.setSmtpPassword(name);
     });
 
     $('#createAlertCancel').click(BITMETER.hideCreateAlertBox);
